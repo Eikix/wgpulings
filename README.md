@@ -1,41 +1,56 @@
-# wgpulings 🎨
+# wgpulings ⚡
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-2021+-orange.svg)
 
-Small exercises to get you used to reading and writing **WGSL shaders** and **wgpu** code!
+**Learn GPU parallel computing and WGSL compute shaders through hands-on exercises!**
 
-Inspired by [rustlings](https://github.com/rust-lang/rustlings), wgpulings is a hands-on tutorial for learning GPU programming with Rust's wgpu library and the WebGPU Shading Language (WGSL).
+Inspired by [rustlings](https://github.com/rust-lang/rustlings), wgpulings teaches you **GPU compute programming** with Rust's wgpu library and the WebGPU Shading Language (WGSL).
 
 ## What is This?
 
-wgpulings is an interactive tutorial that teaches you GPU programming from scratch through practical, hands-on exercises. Whether you're a complete GPU beginner or just new to wgpu/WGSL, this tutorial will guide you through:
+wgpulings is an interactive, **compute-first** tutorial for learning GPU programming. We focus on **parallel computing** and **data processing**, NOT graphics rendering.
 
-- 🎯 GPU fundamentals and the graphics pipeline
-- 🔺 Drawing your first triangle (the "Hello World" of graphics!)
-- 🎨 Vertex and fragment shaders in WGSL
-- 📦 Buffers, textures, and GPU memory management
-- 🌐 3D graphics, transformations, and cameras
-- 💡 Lighting and shading techniques
-- ⚡ Advanced topics like compute shaders
+Perfect for:
+- 🚀 **Parallel data processing** (process millions of elements in parallel)
+- 🔬 **Scientific computing** (simulations, numerical methods)
+- 🖼️ **Image/video processing** (filters, transformations)
+- 🤖 **Machine learning** (matrix operations, neural networks)
+- ⚛️ **Physics simulations** (particles, N-body problems)
+- 📊 **Data analytics** (aggregations, transformations)
+
+Learn to write code that runs **thousands of operations simultaneously** on the GPU!
+
+## Why GPU Compute?
+
+Modern GPUs have **thousands of cores**. A single GPU can execute:
+- **10,000+ threads in parallel**
+- **Teraflops of computation**
+- **Hundreds of GB/s memory bandwidth**
+
+Perfect for problems where you need to do the same operation on lots of data!
 
 ## Why wgpu?
 
 - **Modern**: Based on the WebGPU standard
-- **Safe**: Rust's safety guarantees extend to GPU code
-- **Cross-platform**: Works on Windows, macOS, Linux, and even web browsers
-- **Future-proof**: WebGPU is the future of graphics on the web and beyond
+- **Safe**: Rust's safety guarantees for GPU code
+- **Cross-platform**: Works on Windows, macOS, Linux, and web
+- **No graphics knowledge needed**: Pure compute, no rendering!
+- **Future-proof**: WebGPU is the modern GPU API
 
 ## Prerequisites
 
 - **Rust knowledge**: You should be comfortable with Rust. If not, try [rustlings](https://github.com/rust-lang/rustlings) first!
-- **No GPU experience required**: This tutorial assumes you've never written GPU code before.
+- **No GPU experience required**: We assume you've never written GPU code before.
+- **Basic programming**: Arrays, loops, functions, parallel thinking helpful
 
 ## Installation
 
 ### 1. Install Rust
 
-If you haven't already, install Rust from [rustup.rs](https://rustup.rs/)
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 
 ### 2. Clone this repository
 
@@ -58,223 +73,291 @@ cargo run --release -- list
 
 ## How to Use
 
-wgpulings provides several commands to help you learn:
-
-### List all exercises
-
-```bash
-cargo run --release -- list
-```
-
-This shows all exercises grouped by topic, with progress indicators.
-
 ### Watch mode (recommended!)
 
 ```bash
 cargo run --release -- watch
 ```
 
-This is the best way to work through exercises! Watch mode:
-- Automatically checks your solution when you save
-- Shows compilation errors immediately
-- Moves to the next exercise when you complete one
-- Provides instant feedback
+This is the **best way to learn**! Watch mode:
+- ⚡ Automatically checks your solution when you save
+- 🔍 Shows compilation errors immediately
+- ➡️ Moves to the next exercise when you complete one
+- 💡 Provides instant feedback
 
-### Run a specific exercise
-
-```bash
-cargo run --release -- run intro1
-```
-
-### Get a hint
-
-Stuck? Every exercise has a hint!
+### Other commands
 
 ```bash
-cargo run --release -- hint intro1
-```
+# List all exercises
+cargo run --release -- list
 
-### Verify all exercises
+# Run a specific exercise
+cargo run --release -- run intro01
 
-```bash
+# Get a hint
+cargo run --release -- hint intro01
+
+# Verify all exercises
 cargo run --release -- verify
 ```
 
-Check all exercises at once to see your overall progress.
+## Learning Path
+
+### 🎓 INTRO (4 exercises)
+Learn GPU compute fundamentals:
+- Setting up wgpu for compute (no windows!)
+- Your first compute shader
+- Buffers and data transfer (CPU ↔ GPU)
+- Workgroups and parallel dispatch
+
+### ⚙️ COMPUTE BASICS (5 exercises)
+Master core parallel programming:
+- WGSL compute shader syntax
+- Storage buffers (read/write data)
+- Uniform buffers (parameters)
+- Reading results back to CPU
+- Multiple compute passes
+
+### 🔄 PARALLEL PATTERNS (6 exercises)
+Learn common parallel algorithms:
+- **Map**: Apply function to every element
+- **Reduce**: Combine many values to one (sum, max, min)
+- **Scan**: Prefix sum (cumulative operations)
+- **Histogram**: Count occurrences
+- **Atomics**: Thread-safe operations
+- **Shared memory**: Fast workgroup-local memory
+
+### ⚡ PERFORMANCE (5 exercises)
+Optimize your GPU code:
+- Workgroup sizing strategies
+- Memory coalescing patterns
+- Bank conflict avoidance
+- Benchmarking and profiling
+- Occupancy optimization
+
+### 🚀 APPLICATIONS (6 exercises)
+Build real-world programs:
+- Image processing (grayscale, blur, filters)
+- Matrix multiplication (tiled algorithm)
+- Particle simulations
+- N-body physics
+- GPU sorting algorithms
+- Custom compute pipelines
+
+### 🎨 GRAPHICS (3 exercises - OPTIONAL)
+If you want to visualize results:
+- Basic rendering pipeline
+- Visualizing compute results
+- Mixing compute + graphics
 
 ## Exercise Structure
 
-All exercises contain the comment `I AM NOT DONE` which you need to remove once you think you've solved the exercise. This prevents accidental completion and encourages deliberate practice.
+Each exercise:
+1. Has the marker `I AM NOT DONE` (remove when solved)
+2. Contains `____` markers showing what to fix
+3. Includes extensive comments explaining concepts
+4. Has a helpful hint (run `hint <name>`)
 
-### How to complete an exercise:
+### Example Exercise Flow
 
-1. Open the exercise file (e.g., `exercises/intro/intro1.rs`)
-2. Read the comments and understand what you need to do
-3. Fix the `____` markers and complete any TODOs
-4. Remove the `I AM NOT DONE` comment
-5. Save the file - watch mode will automatically check it!
+```rust
+// intro01.rs - Set up wgpu for compute
 
-## Learning Path
+// I AM NOT DONE  ← Remove this when done
 
-The exercises are organized into progressive topics:
+fn main() {
+    // ... setup code ...
 
-### 📚 Intro (3 exercises)
-Learn the absolute basics of GPU programming:
-- Setting up wgpu (instance, adapter, device, queue)
-- Understanding the graphics pipeline
-- Your first render pass
+    // TODO: Fill in the power preference
+    power_preference: wgpu::PowerPreference::____,  // FIX ME!
+}
+```
 
-### 🎨 Basics (4 exercises)
-Start drawing things:
-- Clearing the screen
-- Drawing your first triangle
-- Adding colors to vertices
-- Using vertex buffers
+1. Read the exercise and comments
+2. Fix the `____` markers
+3. Remove `I AM NOT DONE`
+4. Save → watch mode checks it automatically!
 
-### 🖥️ Shaders (5 exercises)
-Master WGSL (WebGPU Shading Language):
-- WGSL syntax and structure
-- Writing vertex shaders
-- Writing fragment shaders
-- Using uniform buffers
-- Passing data between shader stages
+## GPU Compute Concepts
 
-### 🖼️ 2D Graphics (4 exercises)
-Work with 2D rendering:
-- Index buffers for efficient rendering
-- Loading and using textures
-- Texture sampling and filtering
-- Alpha blending and transparency
+### The GPU Execution Model
 
-### 🌍 3D Graphics (6 exercises)
-Enter the third dimension:
-- 3D coordinate systems
-- Transformations (translate, rotate, scale)
-- Matrix mathematics
-- Camera implementation
-- Perspective projection
-- Depth testing
+```
+CPU                           GPU
+────                          ────
+Upload data    ──────────>    Storage Buffer
+               │               (GPU memory)
+               │                    │
+Submit work    ─────>          Compute Shader
+               │               (thousands of threads)
+               │                    │
+Download       <──────────     Results Buffer
+results
+```
 
-### 💡 Lighting (5 exercises)
-Make things look realistic:
-- Surface normals
-- Diffuse lighting (Lambertian)
-- Specular highlights
-- Combined lighting models (Phong)
-- Multiple light sources
+### Key Terminology
 
-### ⚡ Advanced (5 exercises)
-Take it to the next level:
-- Compute shaders
-- Storage buffers
-- Instanced rendering
-- Cube maps and skyboxes
-- Post-processing effects
+- **Compute Shader**: Program that runs on GPU (in WGSL)
+- **Thread**: Single execution of your shader
+- **Workgroup**: Group of threads that cooperate
+- **Dispatch**: Launch N workgroups
+- **Storage Buffer**: Read/write GPU memory
+- **Uniform Buffer**: Read-only parameters
+- **Barrier**: Synchronization point
+
+### Parallelism Hierarchy
+
+```
+Dispatch
+├── Workgroup 0 (256 threads)
+│   ├── Thread 0
+│   ├── Thread 1
+│   ├── ...
+│   └── Thread 255
+├── Workgroup 1 (256 threads)
+│   └── ...
+└── Workgroup N
+    └── ...
+```
+
+Each thread has a unique `global_invocation_id` - use it to index your data!
+
+## Common Patterns
+
+### Pattern 1: Parallel Map
+
+```wgsl
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let i = gid.x;
+    if (i < arrayLength(&input)) {
+        output[i] = f(input[i]);  // Process independently
+    }
+}
+```
+
+### Pattern 2: Reduction
+
+```wgsl
+// Each workgroup reduces its chunk
+var<workgroup> shared: array<f32, 256>;
+
+@compute @workgroup_size(256)
+fn reduce(@builtin(global_invocation_id) gid: vec3<u32>,
+          @builtin(local_invocation_id) lid: vec3<u32>) {
+    // Load data
+    shared[lid.x] = input[gid.x];
+    workgroupBarrier();
+
+    // Tree reduction
+    for (var stride = 128u; stride > 0u; stride >>= 1u) {
+        if (lid.x < stride) {
+            shared[lid.x] += shared[lid.x + stride];
+        }
+        workgroupBarrier();
+    }
+
+    // Thread 0 writes result
+    if (lid.x == 0u) {
+        output[workgroup_id] = shared[0];
+    }
+}
+```
 
 ## Tips for Success
 
-1. **Go in order**: The exercises build on each other. Don't skip ahead!
-
-2. **Read the comments**: Each exercise has extensive comments explaining concepts.
-
-3. **Use hints**: Don't struggle alone - hints are there to help!
-
-4. **Experiment**: Once you complete an exercise, try modifying it:
-   - Change colors
-   - Adjust positions
-   - Add more vertices
-   - Break things and see what happens!
-
-5. **Use watch mode**: It's the fastest way to iterate and learn.
-
-6. **Take breaks**: GPU programming involves a lot of new concepts. It's normal to need time to absorb them.
-
-## GPU Programming Concepts
-
-### Key Terms
-
-- **GPU**: Graphics Processing Unit - specialized hardware for parallel computation
-- **Shader**: A program that runs on the GPU
-- **Vertex**: A point in space (usually a corner of a triangle)
-- **Fragment**: A potential pixel (before it's written to the screen)
-- **Pipeline**: The series of stages that transform 3D data into pixels
-- **Buffer**: A chunk of memory on the GPU
-- **Texture**: An image stored in GPU memory
-- **Uniform**: Data that's constant for an entire draw call
-
-### The Graphics Pipeline (Simplified)
-
-```
-Vertex Data → Vertex Shader → Rasterization → Fragment Shader → Framebuffer
-     ↓              ↓              ↓                 ↓              ↓
-  Positions    Transform      Convert to        Determine      Final
-  Colors       vertices       fragments          colors        image
-  UVs, etc.                   (pixels)
-```
+1. **Go in order**: Exercises build on each other
+2. **Read comments**: They explain the concepts
+3. **Use hints**: `cargo run -- hint <name>`
+4. **Experiment**: Try changing values, see what happens!
+5. **Think parallel**: How can each thread work independently?
+6. **Watch memory**: Adjacent threads should access adjacent memory
+7. **Check bounds**: Always verify `index < array_length`
 
 ## Common Pitfalls
 
-1. **Forgetting to remove "I AM NOT DONE"**: The most common mistake! The exercise won't pass until you remove this marker.
-
-2. **Wrong coordinate space**: Remember that clip space goes from -1 to 1, not 0 to 1!
-
-3. **Mismatched @location numbers**: Vertex shader outputs must match fragment shader inputs.
-
-4. **Wrong buffer usage flags**: Make sure you specify the right `BufferUsages` flags.
-
-5. **Forgetting to set the pipeline**: You must call `set_pipeline()` before drawing!
+1. **Forgetting `I AM NOT DONE`**: Remove it when done!
+2. **Wrong workgroup count**: Use `ceil(elements / workgroup_size)`
+3. **Out of bounds**: Always check array bounds in shaders
+4. **Race conditions**: Use atomics or separate per-workgroup data
+5. **Wrong buffer usage**: Storage vs Uniform vs Staging
+6. **Forgetting barriers**: Sync before reading shared memory
 
 ## Troubleshooting
 
 ### "Failed to find adapter"
+- Update graphics drivers
+- Try software fallback
+- Check GPU compatibility
 
-This means wgpu couldn't find a compatible GPU. Try:
-- Updating your graphics drivers
-- Running in software mode (slower but works everywhere)
+### "Shader compilation failed"
+- Read the error message carefully
+- Check WGSL syntax
+- Verify @group/@binding numbers match
 
-### "Compilation failed"
-
-Read the error message carefully:
-- For Rust errors: Look at the line number and the error description
-- For WGSL errors: Check your shader syntax, especially @location numbers
-
-### "I'm stuck on an exercise"
-
-1. Read the exercise comments again carefully
-2. Try the hint: `cargo run --release -- hint <exercise_name>`
-3. Look at previous exercises for patterns
-4. Take a break and come back with fresh eyes
+### "Results are wrong"
+- Check workgroup dispatch calculation
+- Verify array bounds checks
+- Print intermediate values (use storage buffer)
+- Start with small data sizes
 
 ## Resources
 
-### Learning Resources
+### WebGPU & WGSL
+- [WebGPU Spec](https://www.w3.org/TR/webgpu/)
+- [WGSL Spec](https://www.w3.org/TR/WGSL/)
+- [wgpu Docs](https://docs.rs/wgpu/)
 
-- [WebGPU Specification](https://www.w3.org/TR/webgpu/) - The official standard
-- [WGSL Specification](https://www.w3.org/TR/WGSL/) - The shader language spec
-- [wgpu Documentation](https://docs.rs/wgpu/) - Rust API docs
-- [Learn Wgpu](https://sotrh.github.io/learn-wgpu/) - Excellent wgpu tutorial
+### GPU Computing
+- [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/) (concepts transfer!)
+- [GPU Gems](https://developer.nvidia.com/gpugems/gpugems3/contributors) (algorithms)
+- [Parallel Algorithms](https://en.wikipedia.org/wiki/Parallel_algorithm) (theory)
 
-### Graphics Programming
+### Community
+- [Graphics Programming Discord](https://discord.gg/graphicsprogramming)
+- [wgpu Matrix Chat](https://matrix.to/#/#wgpu:matrix.org)
+- [Rust GPU](https://github.com/EmbarkStudios/rust-gpu)
 
-- [Learn OpenGL](https://learnopengl.com/) - Concepts transfer to any API
-- [Scratchapixel](https://www.scratchapixel.com/) - Computer graphics fundamentals
-- [Graphics Programming Discord](https://discord.gg/graphicsprogramming) - Community help
+## Example: Your First Compute Shader
+
+```rust
+// Rust side
+let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+    source: wgpu::ShaderSource::Wgsl(r#"
+        @group(0) @binding(0) var<storage, read_write> data: array<f32>;
+
+        @compute @workgroup_size(64)
+        fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+            let i = gid.x;
+            if (i < arrayLength(&data)) {
+                data[i] = data[i] * 2.0;  // Double each value!
+            }
+        }
+    "#.into()),
+    ..Default::default()
+});
+
+// Create pipeline, bind buffers, dispatch...
+compute_pass.dispatch_workgroups(num_elements / 64 + 1, 1, 1);
+```
+
+This runs 64 threads per workgroup, each doubling one element!
 
 ## Contributing
 
-Found a bug? Have an idea for a new exercise? Contributions are welcome!
+Found a bug? Want to add an exercise? Contributions welcome!
 
-Please open an issue or pull request on GitHub.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
 - Inspired by [rustlings](https://github.com/rust-lang/rustlings)
 - Built with [wgpu](https://github.com/gfx-rs/wgpu)
-- Thanks to the Rust graphics community!
+- Thanks to the Rust GPU community!
 
 ---
 
@@ -284,6 +367,8 @@ MIT License - see LICENSE file for details.
 cargo run --release -- watch
 ```
 
-Let's learn GPU programming! 🚀
+**Let's harness the power of parallel computing!** 🚀
 
-**Remember**: Everyone finds GPU programming confusing at first. Stick with it, and soon you'll be rendering beautiful graphics! The feeling of seeing your first triangle appear on screen is incredible. Enjoy the journey! 🎉
+Remember: The GPU has thousands of cores waiting to do your bidding. Every pixel you see on screen was computed in parallel. Every machine learning model was trained with massive parallelism. Now it's your turn to write code that scales!
+
+Happy computing! ⚡
