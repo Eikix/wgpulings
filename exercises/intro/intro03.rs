@@ -71,19 +71,7 @@ async fn run() {
     // input[i] * 2 → output[i]
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Doubler Shader"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read> input: array<f32>;
-            @group(0) @binding(1) var<storage, read_write> output: array<f32>;
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
-                let index = global_id.x;
-                if (index < arrayLength(&input)) {
-                    // TODO: Write code to double the input value
-                    output[index] = input[index] * ____;  // FIX ME!
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("intro03.wgsl").into()),
     });
 
     // Create bind group layout and bind group

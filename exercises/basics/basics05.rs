@@ -51,49 +51,19 @@ async fn run() {
     // Shader 1: Square each value
     let shader1 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Square"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read_write> data: array<f32>;
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&data)) {
-                    data[i] = data[i] * data[i];
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("basics05.wgsl").into()),
     });
 
     // Shader 2: Add 10
     let shader2 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Add 10"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read_write> data: array<f32>;
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&data)) {
-                    data[i] = data[i] + 10.0;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("basics05.wgsl").into()),
     });
 
     // TODO: Create shader 3 that multiplies by 2
     let shader3 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Multiply by 2"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read_write> data: array<f32>;
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&data)) {
-                    data[i] = data[i] * ____;  // FIX ME!
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("basics05.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {

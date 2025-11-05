@@ -35,18 +35,7 @@ async fn run() {
 
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Compute"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read_write> data: array<f32>;
-
-            @compute @workgroup_size(256)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&data)) {
-                    // Do some work
-                    data[i] = sqrt(data[i] * 2.0) + 1.0;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("perf04.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {

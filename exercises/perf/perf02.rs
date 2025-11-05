@@ -47,19 +47,7 @@ async fn run() {
     // COALESCED: Adjacent threads → adjacent memory
     let shader_coalesced = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Coalesced"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read> input: array<f32>;
-            @group(0) @binding(1) var<storage, read_write> output: array<f32>;
-
-            @compute @workgroup_size(256)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&input)) {
-                    // COALESCED: Thread i accesses element i
-                    output[i] = input[i] * 2.0;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("perf02.wgsl").into()),
     });
 
     // TODO: Create UNCOALESCED shader
@@ -67,20 +55,7 @@ async fn run() {
     // This creates a scattered access pattern
     let shader_uncoalesced = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Uncoalesced"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read> input: array<f32>;
-            @group(0) @binding(1) var<storage, read_write> output: array<f32>;
-
-            @compute @workgroup_size(256)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&input)) {
-                    // UNCOALESCED: Scattered access
-                    let index = (i * ____) % arrayLength(&input);  // FIX ME! Use 7 for stride
-                    output[i] = input[index] * 2.0;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("perf02.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
