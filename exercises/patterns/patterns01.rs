@@ -64,20 +64,7 @@ async fn run() {
     // Or: F = C * 1.8 + 32
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("C to F"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read> celsius: array<f32>;
-            @group(0) @binding(1) var<storage, read_write> fahrenheit: array<f32>;
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&celsius)) {
-                    // TODO: Convert C to F
-                    // Formula: F = C * 1.8 + 32
-                    fahrenheit[i] = celsius[i] * ____ + ____;  // FIX ME!
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("patterns01.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {

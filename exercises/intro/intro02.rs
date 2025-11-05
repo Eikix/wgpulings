@@ -9,7 +9,7 @@
 // This defines how many threads run together in a group.
 // Think of it like: "Run this function 1000 times in parallel, in groups of 64"
 //
-// Your task: Create and run your first compute shader that prints thread IDs!
+// Your task: Create and run your first compute shader!
 //
 // Execute `wgpulings hint intro02` if you need help!
 
@@ -37,32 +37,18 @@ async fn run() {
 
     println!("✓ GPU ready for compute");
 
-    // COMPUTE SHADER: A program that runs in parallel on the GPU
-    // This one just returns the thread ID - we'll do real work soon!
-    let shader_source = r#"
-        // @compute marks this as a compute shader
-        // @workgroup_size(64) means 64 threads per workgroup
-        @compute @workgroup_size(64)
-        fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
-            // global_id.x is the unique thread ID
-            // If we dispatch 100 workgroups, we get 64 * 100 = 6400 thread IDs!
-            // Thread 0, 1, 2, ... 6399 all run in parallel
-        }
-    "#;
-
-    // TODO: Create the shader module
-    // Hint: Use device.create_shader_module()
+    // TODO: Load and create the shader module
+    // The shader is in intro02.wgsl - load it with include_str!()
 
     // let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
     //     label: Some("Compute Shader"),
-    //     source: wgpu::ShaderSource::Wgsl(____.into()),  // FIX ME!
+    //     source: wgpu::ShaderSource::Wgsl(include_str!("____").into()),  // FIX ME!
     // });
 
     // println!("✓ Compute shader compiled");
 
     // TODO: Create a compute pipeline
     // This is like a "program" that uses your shader
-    // Uncomment this code:
 
     // let compute_pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
     //     label: Some("Compute Pipeline"),
@@ -75,7 +61,6 @@ async fn run() {
 
     // TODO: Run the compute shader!
     // Create a command encoder and dispatch
-    // Uncomment:
 
     // let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
     //     label: Some("Compute Encoder"),

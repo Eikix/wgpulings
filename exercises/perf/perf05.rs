@@ -33,39 +33,13 @@ async fn run() {
     // LOW OCCUPANCY: Large shared memory usage
     let shader_low_occ = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Low Occupancy"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            // Large shared memory limits how many workgroups can run
-            var<workgroup> big_shared: array<f32, 2048>;
-
-            @compute @workgroup_size(256)
-            fn main(@builtin(local_invocation_id) lid: vec3<u32>) {
-                big_shared[lid.x] = f32(lid.x);
-                workgroupBarrier();
-                let value = big_shared[(lid.x + 1u) % 256u];
-                if (value > 1000.0) {
-                    big_shared[0] = 1.0;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("perf05.wgsl").into()),
     });
 
     // TODO: HIGH OCCUPANCY: Minimal resources
     let shader_high_occ = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("High Occupancy"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            // Small shared memory allows more concurrent workgroups
-            var<workgroup> small_shared: array<f32, ____>;  // FIX ME! Use 64
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(local_invocation_id) lid: vec3<u32>) {
-                small_shared[lid.x] = f32(lid.x);
-                workgroupBarrier();
-                let value = small_shared[(lid.x + 1u) % 64u];
-                if (value > 1000.0) {
-                    small_shared[0] = 1.0;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("perf05.wgsl").into()),
     });
 
     for (name, shader) in &[("Low Occupancy", &shader_low_occ), ("High Occupancy", &shader_high_occ)] {

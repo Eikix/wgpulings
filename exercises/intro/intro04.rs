@@ -59,21 +59,7 @@ async fn run() {
     // Compute shader that squares each number
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Shader"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read> input: array<u32>;
-            @group(0) @binding(1) var<storage, read_write> output: array<u32>;
-
-            @compute @workgroup_size(256)
-            fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
-                let index = global_id.x;
-
-                // IMPORTANT: Check bounds!
-                // We might launch more threads than elements
-                if (index < arrayLength(&input)) {
-                    output[index] = input[index] * input[index];
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("intro04.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {

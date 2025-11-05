@@ -61,23 +61,7 @@ async fn run() {
     // Note: This is O(n²) - real implementations are O(n log n) or better!
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Prefix Sum"),
-        source: wgpu::ShaderSource::Wgsl(r#"
-            @group(0) @binding(0) var<storage, read> input: array<u32>;
-            @group(0) @binding(1) var<storage, read_write> output: array<u32>;
-
-            @compute @workgroup_size(64)
-            fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
-                let i = gid.x;
-                if (i < arrayLength(&input)) {
-                    // TODO: Sum all elements up to and including i
-                    var sum = 0u;
-                    for (var j = 0u; j <= i; j = j + 1u) {
-                        sum = sum + ____;  // FIX ME! What to add?
-                    }
-                    output[i] = sum;
-                }
-            }
-        "#.into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("patterns04.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
