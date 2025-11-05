@@ -42,8 +42,8 @@ async fn run() {
 
     let adapter = instance
         .request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::____,  // FIX ME!
-            compatible_surface: None,  // No surface needed for compute!
+            power_preference: wgpu::PowerPreference::____, // FIX ME!
+            compatible_surface: None,                      // No surface needed for compute!
             force_fallback_adapter: false,
         })
         .await

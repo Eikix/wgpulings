@@ -9,6 +9,110 @@ description = "Small exercises to get you used to reading and writing WGSL shade
 name = "wgpulings"
 path = "src/main.rs"
 
+[[example]]
+name = "intro01"
+path = "exercises/intro/intro01.rs"
+
+[[example]]
+name = "intro02"
+path = "exercises/intro/intro02.rs"
+
+[[example]]
+name = "intro03"
+path = "exercises/intro/intro03.rs"
+
+[[example]]
+name = "intro04"
+path = "exercises/intro/intro04.rs"
+
+[[example]]
+name = "basics02"
+path = "exercises/basics/basics02.rs"
+
+[[example]]
+name = "basics03"
+path = "exercises/basics/basics03.rs"
+
+[[example]]
+name = "basics04"
+path = "exercises/basics/basics04.rs"
+
+[[example]]
+name = "basics05"
+path = "exercises/basics/basics05.rs"
+
+[[example]]
+name = "patterns01"
+path = "exercises/patterns/patterns01.rs"
+
+[[example]]
+name = "patterns02"
+path = "exercises/patterns/patterns02.rs"
+
+[[example]]
+name = "patterns04"
+path = "exercises/patterns/patterns04.rs"
+
+[[example]]
+name = "patterns05"
+path = "exercises/patterns/patterns05.rs"
+
+[[example]]
+name = "perf01"
+path = "exercises/perf/perf01.rs"
+
+[[example]]
+name = "perf02"
+path = "exercises/perf/perf02.rs"
+
+[[example]]
+name = "perf03"
+path = "exercises/perf/perf03.rs"
+
+[[example]]
+name = "perf04"
+path = "exercises/perf/perf04.rs"
+
+[[example]]
+name = "perf05"
+path = "exercises/perf/perf05.rs"
+
+[[example]]
+name = "app01"
+path = "exercises/applications/app01.rs"
+
+[[example]]
+name = "app02"
+path = "exercises/applications/app02.rs"
+
+[[example]]
+name = "app03"
+path = "exercises/applications/app03.rs"
+
+[[example]]
+name = "app04"
+path = "exercises/applications/app04.rs"
+
+[[example]]
+name = "app05"
+path = "exercises/applications/app05.rs"
+
+[[example]]
+name = "app06"
+path = "exercises/applications/app06.rs"
+
+[[example]]
+name = "graphics01"
+path = "exercises/graphics/graphics01.rs"
+
+[[example]]
+name = "graphics02"
+path = "exercises/graphics/graphics02.rs"
+
+[[example]]
+name = "graphics03"
+path = "exercises/graphics/graphics03.rs"
+
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
 colored = "2.1"
