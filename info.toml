@@ -1,539 +1,660 @@
-# Exercise definitions for wgpulings
-# Each exercise has:
-# - name: The exercise file name
-# - path: Path to the exercise file
-# - mode: "compile" or "run" (compile checks it builds, run checks output)
-# - hint: Help text shown when the user asks for a hint
+# Exercise definitions for wgpulings - COMPUTE-FIRST EDITION
+# Focused on parallel computing and GPU compute, with optional graphics at the end
 
-# INTRO - Understanding GPU Fundamentals
+# ============================================================================
+# INTRO - GPU Compute Fundamentals
+# ============================================================================
+
 [[exercises]]
-name = "intro1"
-path = "exercises/intro/intro1.rs"
+name = "intro01"
+path = "exercises/intro/intro01.rs"
 mode = "compile"
 hint = """
-GPU programming is fundamentally different from CPU programming. The GPU excels at
-doing the same operation on many pieces of data in parallel (SIMD - Single Instruction,
-Multiple Data).
+GPU compute is fundamentally different from CPU programming:
+- The GPU excels at PARALLEL processing (doing many things at once)
+- You write programs (compute shaders) that run on thousands of threads simultaneously
+- Data lives in GPU memory - you upload it, process it, then download results
 
-Key concepts:
-- The GPU has its own memory (VRAM)
-- Data needs to be uploaded from CPU to GPU
-- The GPU executes programs called "shaders"
-- There are different types of shaders: vertex, fragment, compute
+For compute, we DON'T need:
+- Windows or screens
+- Rendering pipelines
+- Graphics shaders
 
-Read through the code and fix the I AM NOT DONE markers to proceed."""
+We DO need:
+- Device and queue (connection to GPU)
+- Compute shaders (WGSL programs)
+- Buffers (GPU memory for data)
 
-[[exercises]]
-name = "intro2"
-path = "exercises/intro/intro2.rs"
-mode = "compile"
-hint = """
-wgpu follows the WebGPU standard, which provides a modern, safe API for GPU programming.
-
-The basic setup involves:
-1. Instance - The entry point to wgpu
-2. Adapter - Represents a physical GPU
-3. Device - A logical connection to the GPU
-4. Queue - Used to submit commands to the GPU
-
-The RequestAdapterOptions let you specify which GPU to use (high performance, low power, etc.)."""
+Think of it like: Upload data → Run parallel computation → Download results"""
 
 [[exercises]]
-name = "intro3"
-path = "exercises/intro/intro3.rs"
-mode = "compile"
-hint = """
-A render pass is how you tell the GPU "I want to draw something now".
-
-Key components:
-- RenderPassDescriptor defines what you want to do
-- ColorAttachment specifies which texture to draw to
-- load_op: What to do at the start (clear, load existing)
-- store_op: What to do at the end (store, discard)
-
-Think of it like opening a canvas, painting on it, then deciding whether to save it."""
-
-# BASICS - First Renders
-[[exercises]]
-name = "basics01"
-path = "exercises/basics/basics01.rs"
+name = "intro02"
+path = "exercises/intro/intro02.rs"
 mode = "run"
 hint = """
-Clearing the screen is the simplest GPU operation. You're telling the GPU:
-"Fill this entire texture with one color."
+Your first compute shader! This is the "Hello World" of GPU compute.
 
-The color is specified as RGBA values from 0.0 to 1.0:
-- r: 1.0 = full red
-- g: 1.0 = full green
-- b: 1.0 = full blue
-- a: 1.0 = fully opaque
+A compute shader:
+- Is marked with @compute
+- Has a workgroup size: @workgroup_size(X, Y, Z)
+- Runs many instances in parallel
+- Each instance has a unique ID: @builtin(global_invocation_id)
 
-Try changing the clear color to see the effect!"""
+The workgroup size determines how many threads run together in a group.
+Common sizes: (64), (8, 8), (256), etc.
+
+Your shader will run on EVERY element of your data in parallel!"""
+
+[[exercises]]
+name = "intro03"
+path = "exercises/intro/intro03.rs"
+mode = "run"
+hint = """
+Buffers are chunks of memory on the GPU.
+
+Key buffer types for compute:
+- STORAGE: Read/write data (your main working memory)
+- UNIFORM: Read-only parameters (constants for the computation)
+- MAP_READ: Can be read from CPU (for getting results back)
+- COPY_SRC/COPY_DST: Can be copied to/from
+
+Typical workflow:
+1. Create storage buffer with your data
+2. Create staging buffer for results (MAP_READ)
+3. Run compute shader
+4. Copy storage → staging
+5. Map staging buffer to read from CPU"""
+
+[[exercises]]
+name = "intro04"
+path = "exercises/intro/intro04.rs"
+mode = "run"
+hint = """
+Workgroups and threads are the key to parallel execution.
+
+Hierarchy:
+- Dispatch: Total number of workgroups (X, Y, Z)
+- Workgroup: Group of threads that can cooperate (defined in shader)
+- Thread: Individual execution unit
+
+If you have 1000 elements and workgroup size of 64:
+- Dispatch 16 workgroups (rounded up from 1000/64)
+- Each workgroup runs 64 threads in parallel
+- Total: 1024 thread invocations (some do nothing if > 1000)
+
+Calculate: num_workgroups = ceil(num_elements / workgroup_size)"""
+
+# ============================================================================
+# COMPUTE BASICS - Core Parallel Programming
+# ============================================================================
+
+[[exercises]]
+name = "basics01"
+path = "exercises/basics/basics01.wgsl"
+mode = "compile"
+hint = """
+WGSL (WebGPU Shading Language) for compute shaders.
+
+Key syntax:
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
+    let index = global_id.x;
+    // Your computation here
+}
+
+Storage buffers:
+@group(0) @binding(0) var<storage, read_write> data: array<f32>;
+
+Access: data[index] = value;
+
+The global_invocation_id is unique for each thread - use it to index your data!"""
 
 [[exercises]]
 name = "basics02"
 path = "exercises/basics/basics02.rs"
 mode = "run"
 hint = """
-Drawing a triangle is the "Hello World" of GPU programming!
+Storage buffers hold your data for computation.
 
-Every piece of geometry on the GPU is made of triangles. To draw one, you need:
-1. Vertex data (positions of the three corners)
-2. A vertex shader (processes each vertex)
-3. A fragment shader (colors each pixel)
+Declaration in WGSL:
+@group(0) @binding(0) var<storage, read> input: array<f32>;
+@group(0) @binding(1) var<storage, read_write> output: array<f32>;
 
-The vertex shader runs once per vertex (3 times for a triangle).
-The fragment shader runs once per pixel inside the triangle (could be thousands of times!).
+In Rust:
+- Create buffer with BufferUsages::STORAGE
+- Fill with data using queue.write_buffer() or create_buffer_init()
+- Bind in a BindGroup matching your @group/@binding numbers
 
-Look for the vertex positions and make sure they're in clip space (-1.0 to 1.0)."""
+Access modes: <storage, read>, <storage, read_write>
+Read-only is faster! Use read when you don't need to modify."""
 
 [[exercises]]
 name = "basics03"
 path = "exercises/basics/basics03.rs"
 mode = "run"
 hint = """
-Vertex colors allow each corner of the triangle to have a different color.
-The GPU automatically interpolates (blends) the colors between vertices!
+Uniform buffers hold parameters/constants for your computation.
 
-This is called "varying" data - it varies across the surface of the triangle.
+Uniforms:
+- Small (up to 64KB typically)
+- Read-only in shaders
+- Fast access
+- Great for parameters: size, scale, time, etc.
 
-Your Vertex struct needs to include color data, and you need to:
-1. Add color to the vertex buffer layout
-2. Pass color from vertex shader to fragment shader
-3. Use the interpolated color in the fragment shader"""
+Example:
+struct Params {
+    scale: f32,
+    offset: f32,
+}
+@group(0) @binding(2) var<uniform> params: Params;
+
+Use uniforms for values that are constant across the whole computation!"""
 
 [[exercises]]
 name = "basics04"
 path = "exercises/basics/basics04.rs"
 mode = "run"
 hint = """
-Buffers are how you send data from CPU to GPU.
+Getting results back to CPU:
 
-Key types:
-- Vertex buffer: Holds vertex data (positions, colors, etc.)
-- Index buffer: Defines which vertices form triangles
-- Uniform buffer: Holds constants like transforms, time, etc.
+1. Compute writes to storage buffer
+2. Copy storage buffer to staging buffer
+3. Map staging buffer to CPU memory
+4. Read the data!
 
-To create a buffer:
-1. Create it with wgpu::Device::create_buffer_init()
-2. Specify the usage (VERTEX, INDEX, UNIFORM, etc.)
-3. The contents must be &[u8], use bytemuck::cast_slice()
+Staging buffer requirements:
+- BufferUsages::MAP_READ | BufferUsages::COPY_DST
+- Can be mapped to CPU memory
 
-Remember: The GPU can't access CPU memory directly!"""
-
-# SHADERS - WGSL Fundamentals
-[[exercises]]
-name = "shaders01"
-path = "exercises/shaders/shaders01.wgsl"
-mode = "compile"
-hint = """
-WGSL (WebGPU Shading Language) is the shader language for WebGPU.
-
-Basic syntax:
-- Variables: var name: type = value;
-- Constants: const name: type = value;
-- Functions: fn name(params) -> return_type { }
-- Built-in types: f32, i32, u32, vec2<f32>, vec3<f32>, vec4<f32>, mat4x4<f32>
-
-Comments use // for single line
-
-Shader entry points need the @vertex or @fragment attribute."""
+Code pattern:
+encoder.copy_buffer_to_buffer(storage, 0, staging, 0, size);
+queue.submit(...);
+let slice = staging.slice(..);
+slice.map_async(...);
+device.poll(...);
+let data = slice.get_mapped_range();
+// Read your results!"""
 
 [[exercises]]
-name = "shaders02"
-path = "exercises/shaders/shaders02.wgsl"
-mode = "compile"
-hint = """
-The vertex shader's job is to transform vertex positions from model space
-to clip space (normalized device coordinates from -1 to 1).
-
-Input: Vertex attributes (position, color, UV, etc.)
-Output: Built-in position (@builtin(position)) and any varying data
-
-The @location(N) attribute specifies which input/output slot to use.
-These numbers must match between:
-- Rust vertex buffer layout -> Vertex shader input
-- Vertex shader output -> Fragment shader input"""
-
-[[exercises]]
-name = "shaders03"
-path = "exercises/shaders/shaders03.wgsl"
-mode = "compile"
-hint = """
-The fragment shader determines the final color of each pixel.
-
-Input: Interpolated varying values from the vertex shader
-Output: Color value(s) to write to render target(s)
-
-The @location(0) on the return value specifies which color attachment to write to.
-
-vec4<f32> is used for colors: (red, green, blue, alpha) all from 0.0 to 1.0"""
-
-[[exercises]]
-name = "shaders04"
-path = "exercises/shaders/shaders04.wgsl"
-mode = "compile"
-hint = """
-Uniform buffers hold data that's constant for an entire draw call.
-Common uses: transformation matrices, time, light positions, material properties.
-
-To use uniforms in WGSL:
-1. Declare a struct for the data
-2. Declare the uniform: @group(0) @binding(0) var<uniform> name: Type;
-3. Use it in your shader code
-
-The @group and @binding numbers must match the bind group layout in Rust.
-"""
-
-[[exercises]]
-name = "shaders05"
-path = "exercises/shaders/shaders05.wgsl"
-mode = "compile"
-hint = """
-"Varying" is the term for data passed from vertex to fragment shader.
-It's called varying because it's interpolated across the triangle.
-
-Vertex shader output -> GPU interpolates -> Fragment shader input
-
-Example: If one vertex is red and another is blue, pixels in between
-will be automatically blended from red to purple to blue!
-
-The @location numbers must match between vertex output and fragment input."""
-
-# 2D GRAPHICS
-[[exercises]]
-name = "graphics2d01"
-path = "exercises/graphics2d/graphics2d01.rs"
+name = "basics05"
+path = "exercises/basics/basics05.rs"
 mode = "run"
 hint = """
-Index buffers let you reuse vertices. A rectangle has 4 corners but 6 vertices
-if you draw it as 2 triangles without indices.
+Multiple dispatches in one command buffer!
 
-With indices:
-- 4 vertices defining the corners
-- 6 indices: [0,1,2, 0,2,3] defining two triangles
+You can:
+1. Run compute pass A
+2. Run compute pass B (using A's output)
+3. Run compute pass C
+... all in one submission!
 
-This saves memory and processing time!
+This avoids CPU-GPU round trips and is MUCH faster.
 
-Use BufferUsages::INDEX and render_pass.set_index_buffer()."""
+Pattern:
+let mut encoder = device.create_command_encoder(...);
+{
+    let mut pass = encoder.begin_compute_pass(...);
+    pass.set_pipeline(&pipeline1);
+    pass.dispatch_workgroups(...);
+    pass.set_pipeline(&pipeline2);
+    pass.dispatch_workgroups(...);
+}
+queue.submit([encoder.finish()]);"""
+
+# ============================================================================
+# PARALLEL PATTERNS - Common Parallel Algorithms
+# ============================================================================
 
 [[exercises]]
-name = "graphics2d02"
-path = "exercises/graphics2d/graphics2d02.rs"
+name = "patterns01"
+path = "exercises/patterns/patterns01.rs"
 mode = "run"
 hint = """
-Textures are images loaded into GPU memory.
+Parallel Map: Apply a function to every element independently.
 
-Steps:
-1. Load image with image::load_from_memory() or similar
-2. Create a texture with device.create_texture()
-3. Upload data with queue.write_texture()
-4. Create a texture view and sampler
-5. Bind them in a bind group
+This is the simplest parallel pattern!
+- Each thread processes one element
+- No communication between threads
+- Perfect parallelism
 
-The texture format (Rgba8UnormSrgb) determines how colors are stored."""
+Examples:
+- Multiply every number by 2
+- Convert RGB to grayscale
+- Apply a function f(x) to array
+
+Pattern:
+let index = global_id.x;
+output[index] = f(input[index]);
+
+This is "embarrassingly parallel" - scales perfectly with more GPU cores!"""
 
 [[exercises]]
-name = "graphics2d03"
-path = "exercises/graphics2d/graphics2d03.wgsl"
+name = "patterns02"
+path = "exercises/patterns/patterns02.rs"
+mode = "run"
+hint = """
+Parallel Reduction: Combine many values into one (e.g., sum, max, min).
+
+This is trickier than map because threads need to COMBINE results.
+
+Simple approach (two-pass):
+1. Each workgroup reduces its chunk to one value
+2. CPU reads partial results and combines them
+
+Better approach (tree reduction):
+1. Each thread loads one element
+2. Threads cooperate in workgroup using shared memory
+3. Tree-style reduction: pair up, add, repeat
+4. Workgroup produces one result
+
+For now, use the simple approach - we'll do tree reduction later!"""
+
+[[exercises]]
+name = "patterns03"
+path = "exercises/patterns/patterns03.wgsl"
 mode = "compile"
 hint = """
-To sample a texture in WGSL:
+Workgroup shared memory: Fast memory shared by threads in a workgroup.
 
-@group(0) @binding(0) var my_texture: texture_2d<f32>;
-@group(0) @binding(1) var my_sampler: sampler;
+Declaration:
+var<workgroup> shared_data: array<f32, 256>;
 
-// In fragment shader:
-let color = textureSample(my_texture, my_sampler, uv_coords);
+Usage:
+1. Each thread writes to shared memory
+2. workgroupBarrier() - wait for all threads
+3. Threads read from shared memory
 
-UV coordinates range from (0,0) at top-left to (1,1) at bottom-right.
-The sampler controls filtering (nearest, linear) and wrapping (repeat, clamp)."""
+This is MUCH faster than global memory for thread cooperation!
+
+Important:
+- Size must match workgroup size
+- Need barriers for synchronization
+- Only visible within one workgroup
+
+Perfect for: reductions, scans, cooperative algorithms"""
 
 [[exercises]]
-name = "graphics2d04"
-path = "exercises/graphics2d/graphics2d04.rs"
+name = "patterns04"
+path = "exercises/patterns/patterns04.rs"
 mode = "run"
 hint = """
-Alpha blending allows transparency. The blend function combines the new color
-with the color already in the framebuffer.
+Parallel Scan (Prefix Sum): Each element gets sum of all previous elements.
 
-Common blend modes:
-- Alpha blend: new_color * alpha + old_color * (1 - alpha)
-- Additive: new_color + old_color (for lights, particles)
-- Multiply: new_color * old_color (for shadows, tinting)
+Input:  [1, 2, 3, 4, 5]
+Output: [1, 3, 6, 10, 15]
 
-Set blend state in the ColorTargetState when creating the render pipeline."""
+This is useful for:
+- Compaction
+- Allocation
+- Radix sort
+- Stream compaction
 
-# 3D GRAPHICS
+Algorithm (simplified two-pass):
+1. Upsweep: Build partial sums in tree
+2. Downsweep: Distribute sums back
+
+For large arrays, you need multiple passes with workgroup-level scans.
+Start simple: single workgroup scan using shared memory."""
+
 [[exercises]]
-name = "graphics3d01"
-path = "exercises/graphics3d/graphics3d01.rs"
+name = "patterns05"
+path = "exercises/patterns/patterns05.rs"
 mode = "run"
 hint = """
-3D coordinate systems typically use:
-- X axis: right
-- Y axis: up
-- Z axis: forward (or backward depending on convention)
+Histogram: Count occurrences of values in bins.
 
-wgpu uses a right-handed coordinate system with:
-- X+ right, Y+ up, Z+ toward you (out of screen)
+Example: Count how many pixels fall in each brightness range.
 
-Positions are initially in "model space" (relative to the object).
-Transformations convert through: model -> world -> view -> clip space."""
+Challenge: Multiple threads may update the same bin (race condition!)
 
-[[exercises]]
-name = "graphics3d02"
-path = "exercises/graphics3d/graphics3d02.rs"
-mode = "run"
-hint = """
-Transformations move, rotate, and scale objects.
+Solutions:
+1. Atomic operations: atomicAdd(&histogram[bin], 1u)
+2. Local histograms: Each workgroup builds its own, then merge
+3. Striping: Partition data so threads don't collide
 
-- Translation: Move (x, y, z)
-- Rotation: Around an axis by an angle
-- Scale: Multiply size by (sx, sy, sz)
-
-These are represented as 4x4 matrices. Order matters!
-Typically: Scale -> Rotate -> Translate
-
-Use cgmath or glam crates for matrix math."""
+Atomics are simplest but can be slow if many threads hit the same bin.
+For best performance, combine approach 2 (local) + 1 (atomic merge)."""
 
 [[exercises]]
-name = "graphics3d03"
-path = "exercises/graphics3d/graphics3d03.rs"
-mode = "run"
-hint = """
-Matrices are the fundamental tool for 3D transformations.
-
-Key matrix types:
-- Model matrix: Object's position/rotation/scale in world
-- View matrix: Camera's position and orientation (inverse of camera transform)
-- Projection matrix: 3D to 2D projection (perspective or orthographic)
-
-Combined: MVP = Projection * View * Model
-
-Multiply in vertex shader: clip_pos = mvp * vec4<f32>(vertex_pos, 1.0);"""
-
-[[exercises]]
-name = "graphics3d04"
-path = "exercises/graphics3d/graphics3d04.rs"
-mode = "run"
-hint = """
-A camera defines what part of the 3D world is visible.
-
-Components:
-- Position: Where the camera is (eye)
-- Target: What it's looking at
-- Up vector: Which way is up (usually (0, 1, 0))
-
-The view matrix converts from world space to camera space.
-Use cgmath::Matrix4::look_at_rh() or similar."""
-
-[[exercises]]
-name = "graphics3d05"
-path = "exercises/graphics3d/graphics3d05.rs"
-mode = "run"
-hint = """
-Perspective projection makes distant objects appear smaller (like real life).
-
-Parameters:
-- FOV (field of view): How wide the view is (typically 45-90 degrees)
-- Aspect ratio: Width / height
-- Near plane: Closest visible distance
-- Far plane: Farthest visible distance
-
-Use cgmath::perspective() to create the projection matrix.
-
-Alternative: Orthographic projection (no perspective, used for 2D or technical views)."""
-
-[[exercises]]
-name = "graphics3d06"
-path = "exercises/graphics3d/graphics3d06.rs"
-mode = "run"
-hint = """
-The depth buffer (Z-buffer) determines which objects are in front of others.
-
-For each pixel:
-1. Fragment shader runs
-2. Depth value is compared with depth buffer
-3. If closer (depth test passes), update color and depth
-4. If farther, discard the fragment
-
-Enable with:
-- depth_stencil attachment in render pass
-- depth_stencil state in pipeline (comparison function, write enabled)
-
-Format: Depth32Float or Depth24Plus"""
-
-# LIGHTING
-[[exercises]]
-name = "lighting01"
-path = "exercises/lighting/lighting01.wgsl"
+name = "patterns06"
+path = "exercises/patterns/patterns06.wgsl"
 mode = "compile"
 hint = """
-Surface normals are vectors perpendicular to a surface.
-They're essential for lighting calculations.
+Atomic operations: Thread-safe read-modify-write operations.
 
-Key points:
-- Normals should be unit vectors (length 1)
-- Normals in vertex data need to be transformed to world space
-- Normal transformation uses the inverse transpose of the model matrix
-- For lighting, you often need to normalize after interpolation
+Available atomics in WGSL:
+- atomicAdd(ptr, value) - Add and return old value
+- atomicSub(ptr, value) - Subtract
+- atomicMax(ptr, value) - Max
+- atomicMin(ptr, value) - Min
+- atomicAnd/Or/Xor - Bitwise operations
+- atomicExchange - Swap
+- atomicCompareExchangeWeak - CAS
 
-vec3<f32> normal = normalize(interpolated_normal);"""
+Storage must be:
+- atomic<i32> or atomic<u32> (not f32!)
+- In storage buffer or workgroup memory
 
-[[exercises]]
-name = "lighting02"
-path = "exercises/lighting/lighting02.wgsl"
-mode = "compile"
-hint = """
-Diffuse lighting (Lambertian) makes surfaces brighter when facing the light.
+Use for: histograms, counters, locks, synchronization"""
 
-Formula: diffuse = max(dot(normal, light_dir), 0.0) * light_color
-
-- normal: Surface normal (unit vector)
-- light_dir: Direction TO the light (unit vector)
-- dot product gives cosine of angle between them
-- max() prevents negative values (surfaces facing away are dark)
-
-This simulates rough surfaces that scatter light equally in all directions."""
+# ============================================================================
+# PERFORMANCE - Optimization Techniques
+# ============================================================================
 
 [[exercises]]
-name = "lighting03"
-path = "exercises/lighting/lighting03.wgsl"
-mode = "compile"
+name = "perf01"
+path = "exercises/perf/perf01.rs"
+mode = "run"
 hint = """
-Specular lighting creates shiny highlights based on view angle.
+Workgroup size matters for performance!
 
-Formula: specular = pow(max(dot(view_dir, reflect_dir), 0.0), shininess)
+Too small (e.g., 1, 4):
+- Underutilizes GPU
+- More overhead
 
-- view_dir: Direction TO the viewer
-- reflect_dir: Light direction reflected across normal
-- shininess: Higher = smaller, sharper highlight
-- Use reflect() built-in to calculate reflection
+Too large (e.g., 1024):
+- May not fit (hardware limits)
+- Less flexibility for scheduler
 
-This simulates smooth surfaces that reflect light like mirrors."""
+Sweet spots: 64, 128, 256
+
+Rules of thumb:
+- Multiple of 32 (warp/wavefront size)
+- Power of 2
+- Consider your data size
+- Benchmark!
+
+Test different sizes and measure performance!"""
 
 [[exercises]]
-name = "lighting04"
-path = "exercises/lighting/lighting04.wgsl"
-mode = "compile"
+name = "perf02"
+path = "exercises/perf/perf02.rs"
+mode = "run"
 hint = """
-The Phong lighting model combines:
-1. Ambient: Base lighting (simulates indirect light)
-2. Diffuse: Direction-dependent brightness
-3. Specular: Shiny highlights
+Memory coalescing: Access memory in patterns the GPU likes.
 
-final_color = ambient + diffuse + specular;
+GOOD (coalesced):
+Thread 0 reads index 0
+Thread 1 reads index 1
+Thread 2 reads index 2
+→ One memory transaction!
 
-Each component can have its own color/intensity.
-Material properties control how much of each to apply."""
+BAD (scattered):
+Thread 0 reads index 0
+Thread 1 reads index 100
+Thread 2 reads index 200
+→ Three separate transactions!
+
+Guideline: Adjacent threads should access adjacent memory.
+
+Structure your algorithm so global_id.x maps to adjacent indices."""
 
 [[exercises]]
-name = "lighting05"
-path = "exercises/lighting/lighting05.wgsl"
-mode = "compile"
+name = "perf03"
+path = "exercises/perf/perf03.rs"
+mode = "run"
 hint = """
-Multiple lights are applied by summing their contributions.
+Shared memory bank conflicts: How threads access shared memory matters.
 
-struct Light {
-    position: vec3<f32>,
-    color: vec3<f32>,
-    intensity: f32,
+GPU shared memory is organized in "banks" (typically 32).
+
+GOOD (no conflict):
+Thread 0 → bank 0
+Thread 1 → bank 1
+Thread 2 → bank 2
+
+BAD (conflict):
+Thread 0 → bank 0
+Thread 1 → bank 0  ← CONFLICT! Serialized access
+
+Avoid:
+- Multiple threads accessing same bank
+- Stride patterns that map to same bank
+
+Solution: Pad shared memory arrays or change access pattern."""
+
+[[exercises]]
+name = "perf04"
+path = "exercises/perf/perf04.rs"
+mode = "run"
+hint = """
+Benchmarking GPU compute:
+
+Use timestamps:
+1. Create QuerySet with TIMESTAMP type
+2. Write timestamp before compute
+3. Write timestamp after compute
+4. Resolve to buffer
+5. Read and calculate delta
+
+Important:
+- Timestamp queries require TIMESTAMP_QUERY feature
+- Multiple runs for accurate results
+- Watch out for GPU warmup
+- Measure end-to-end (include data transfer!)
+
+Don't optimize blindly - measure first!"""
+
+[[exercises]]
+name = "perf05"
+path = "exercises/perf/perf05.rs"
+mode = "run"
+hint = """
+Occupancy: How many threads can run simultaneously on the GPU.
+
+Limited by:
+- Registers per thread
+- Shared memory per workgroup
+- Maximum threads per SM/CU
+
+To increase occupancy:
+- Reduce register usage (simpler shaders)
+- Use less shared memory
+- Adjust workgroup size
+
+Higher occupancy → Better latency hiding → Better performance
+(usually, but not always!)
+
+Use profiling tools to see occupancy and identify bottlenecks."""
+
+# ============================================================================
+# APPLICATIONS - Real-World Use Cases
+# ============================================================================
+
+[[exercises]]
+name = "app01"
+path = "exercises/applications/app01.rs"
+mode = "run"
+hint = """
+Image processing: Perfect for GPU parallel computing!
+
+Each pixel is independent → Perfect parallelism
+
+Common operations:
+- Grayscale conversion
+- Brightness/contrast
+- Blur (each pixel reads neighbors)
+- Edge detection
+- Color correction
+
+Pattern:
+let x = global_id.x;
+let y = global_id.y;
+let index = y * width + x;
+let color = input[index];
+output[index] = process(color);
+
+2D dispatch: dispatch_workgroups(width/8, height/8, 1)"""
+
+[[exercises]]
+name = "app02"
+path = "exercises/applications/app02.rs"
+mode = "run"
+hint = """
+Gaussian blur: Each pixel is the weighted average of neighbors.
+
+Algorithm:
+1. For each pixel (x, y)
+2. Sample surrounding pixels in a radius
+3. Multiply each by Gaussian weight
+4. Sum and normalize
+
+Challenge: Reading from neighbors (not coalesced perfectly)
+
+Optimization: Two-pass separable blur
+- Pass 1: Blur horizontally
+- Pass 2: Blur vertically
+This is faster and more cache-friendly!"""
+
+[[exercises]]
+name = "app03"
+path = "exercises/applications/app03.rs"
+mode = "run"
+hint = """
+Matrix multiplication: A classic parallel algorithm!
+
+C[i,j] = sum over k of A[i,k] * B[k,j]
+
+Naive approach:
+- Each thread computes one element of C
+- Loops over k dimension
+- Slow: Many global memory accesses
+
+Better approach (tiled):
+1. Load tile of A and B into shared memory
+2. Compute partial results
+3. Repeat for next tiles
+4. Accumulate results
+
+This uses shared memory to reduce global memory traffic!"""
+
+[[exercises]]
+name = "app04"
+path = "exercises/applications/app04.rs"
+mode = "run"
+hint = """
+Particle simulation: Update many particles in parallel.
+
+Each thread updates one particle:
+- Apply forces
+- Update velocity
+- Update position
+- Handle collisions/boundaries
+
+Data structure:
+struct Particle {
+    position: vec2<f32>,
+    velocity: vec2<f32>,
+    mass: f32,
 }
 
-For each light:
-1. Calculate light_dir and distance
-2. Calculate diffuse and specular
-3. Apply attenuation (light weakens with distance)
-4. Sum all light contributions
+Perfect for GPU: Each particle independent (mostly)
+Tricky part: Collisions between particles (need spatial partitioning)"""
 
-Attenuation: 1.0 / (1.0 + distance * distance)"""
-
-# ADVANCED
 [[exercises]]
-name = "advanced01"
-path = "exercises/advanced/advanced01.rs"
+name = "app05"
+path = "exercises/applications/app05.rs"
 mode = "run"
 hint = """
-Compute shaders are general-purpose GPU programs.
-Unlike vertex/fragment shaders, they don't render - they process data.
+N-body simulation: Each body affects all others (O(n²) problem).
 
-Use cases:
-- Particle simulations
-- Image processing
-- Physics calculations
-- AI/ML inference
+Forces between bodies:
+F = G * m1 * m2 / r²
 
-Entry point: @compute @workgroup_size(X, Y, Z)
-The GPU runs many workgroups in parallel, each with multiple threads."""
+Naive: Each thread computes forces from all other bodies
 
-[[exercises]]
-name = "advanced02"
-path = "exercises/advanced/advanced02.wgsl"
-mode = "compile"
-hint = """
-Storage buffers are read-write buffers accessible in compute shaders.
+Optimizations:
+1. Use shared memory to cache body data
+2. Tiling: Process bodies in blocks
+3. Barnes-Hut tree (more complex)
+4. Fast Multipole Method (very complex)
 
-@group(0) @binding(0) var<storage, read_write> data: array<f32>;
-
-Access with: data[index] = value;
-
-Unlike uniform buffers (read-only, small), storage buffers can be:
-- Very large (many MB or GB)
-- Written to from shaders
-- Used for arbitrary data structures
-
-Common pattern: Read input buffer, process, write output buffer."""
+Start with naive approach, then optimize with shared memory.
+This is compute-heavy, so memory access patterns matter less."""
 
 [[exercises]]
-name = "advanced03"
-path = "exercises/advanced/advanced03.rs"
+name = "app06"
+path = "exercises/applications/app06.rs"
 mode = "run"
 hint = """
-Instancing draws the same object many times with different transforms.
-This is much faster than separate draw calls!
+Sorting on GPU: Parallel sorting algorithms.
 
-Instead of:
-for obj in objects { set_uniform(transform); draw(); }
+Good parallel sorts:
+- Bitonic sort: O(log²n) comparisons, fully parallel
+- Radix sort: O(n*k) where k is bits, uses scan
+- Sample sort: Partition-based
 
-Use:
-set_instance_buffer(all_transforms); draw_instanced(instance_count);
+Bitonic sort is simplest:
+1. Sequences of increasing/decreasing order
+2. Repeatedly merge and sort
+3. Each stage is parallel compare-swap
 
-Each instance gets a different @builtin(instance_index) in the vertex shader.
-Use this to index into an array of transforms/colors/etc."""
+For large data, radix sort is faster but more complex.
+Start with bitonic sort for learning!"""
 
-[[exercises]]
-name = "advanced04"
-path = "exercises/advanced/advanced04.rs"
-mode = "run"
-hint = """
-Cubemaps are textures with 6 faces (like a cube surrounding the scene).
-Used for:
-- Skyboxes (distant environment)
-- Environment mapping (reflections)
-- Shadow mapping (omnidirectional shadows)
-
-In WGSL:
-@binding(0) var env_map: texture_cube<f32>;
-let color = textureSample(env_map, sampler, direction_vec);
-
-Sample with a 3D direction vector, not 2D UVs!"""
+# ============================================================================
+# GRAPHICS (Optional) - Visualization and Rendering
+# ============================================================================
 
 [[exercises]]
-name = "advanced05"
-path = "exercises/advanced/advanced05.rs"
+name = "graphics01"
+path = "exercises/graphics/graphics01.rs"
 mode = "run"
 hint = """
-Post-processing applies effects to the rendered image as a whole.
+[OPTIONAL] Graphics fundamentals: Rendering vs Compute
 
-Process:
-1. Render scene to a texture (not screen)
-2. Use that texture as input to a fullscreen quad
-3. Fragment shader applies effect (blur, bloom, color grading, etc.)
-4. Render final result to screen
+So far you've done COMPUTE (data processing).
+Graphics adds VISUALIZATION (drawing results).
 
-Common effects:
-- Blur (average surrounding pixels)
-- Bloom (bright areas glow)
-- Tone mapping (HDR to LDR)
-- Color correction"""
+New concepts:
+- Window/Surface: Where to draw
+- Render pipeline: Vertex + Fragment shaders
+- Vertex buffers: Geometry data
+- Textures: Images to display
+
+You can mix compute + graphics:
+1. Compute shader processes data
+2. Graphics pipeline visualizes it
+
+This exercise sets up basic rendering."""
+
+[[exercises]]
+name = "graphics02"
+path = "exercises/graphics/graphics02.rs"
+mode = "run"
+hint = """
+[OPTIONAL] Visualizing compute results.
+
+Pattern:
+1. Run compute shader → writes to storage buffer
+2. Bind storage buffer as vertex buffer
+3. Render points/lines from the data
+
+Or:
+1. Compute writes to texture
+2. Render texture to screen
+
+This is powerful for:
+- Particle visualization
+- Scientific visualization
+- Real-time data display
+- Debugging compute shaders"""
+
+[[exercises]]
+name = "graphics03"
+path = "exercises/graphics/graphics03.rs"
+mode = "run"
+hint = """
+[OPTIONAL] Compute + render in one frame.
+
+Animation loop:
+1. Compute shader updates simulation
+2. Render shader draws results
+3. Repeat each frame
+
+Storage buffers can be used by BOTH compute and render!
+
+Ping-pong buffers:
+- Frame N: Read from A, write to B
+- Frame N+1: Read from B, write to A
+- Avoids race conditions"""
