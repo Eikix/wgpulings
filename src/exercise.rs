@@ -61,11 +61,25 @@ impl Exercise {
         fs::create_dir_all(&src_dir).map_err(|e| e.to_string())?;
         fs::copy(&self.path, src_dir.join("main.rs")).map_err(|e| e.to_string())?;
 
-        // Copy any associated .wgsl file (same name, different extension)
-        let wgsl_path = PathBuf::from(&self.path).with_extension("wgsl");
-        if wgsl_path.exists() {
-            let wgsl_name = wgsl_path.file_name().unwrap();
-            fs::copy(&wgsl_path, src_dir.join(wgsl_name)).map_err(|e| e.to_string())?;
+        // Copy any associated .wgsl files (same name, different extension, and any with prefix)
+        let base_path = PathBuf::from(&self.path);
+        let parent_dir = base_path.parent().unwrap();
+        let file_stem = base_path.file_stem().unwrap().to_str().unwrap();
+
+        // Copy all .wgsl files that start with the exercise name
+        if let Ok(entries) = fs::read_dir(parent_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.extension().and_then(|s| s.to_str()) == Some("wgsl") {
+                    if let Some(name) = path.file_stem().and_then(|s| s.to_str()) {
+                        // Copy if it matches exactly or starts with exercise name + underscore
+                        if name == file_stem || name.starts_with(&format!("{}_", file_stem)) {
+                            let wgsl_name = path.file_name().unwrap();
+                            fs::copy(&path, src_dir.join(wgsl_name)).map_err(|e| e.to_string())?;
+                        }
+                    }
+                }
+            }
         }
 
         // Create a minimal Cargo.toml
@@ -130,11 +144,25 @@ cgmath = "0.18"
         fs::create_dir_all(&src_dir).map_err(|e| e.to_string())?;
         fs::copy(&self.path, src_dir.join("main.rs")).map_err(|e| e.to_string())?;
 
-        // Copy any associated .wgsl file (same name, different extension)
-        let wgsl_path = PathBuf::from(&self.path).with_extension("wgsl");
-        if wgsl_path.exists() {
-            let wgsl_name = wgsl_path.file_name().unwrap();
-            fs::copy(&wgsl_path, src_dir.join(wgsl_name)).map_err(|e| e.to_string())?;
+        // Copy any associated .wgsl files (same name, different extension, and any with prefix)
+        let base_path = PathBuf::from(&self.path);
+        let parent_dir = base_path.parent().unwrap();
+        let file_stem = base_path.file_stem().unwrap().to_str().unwrap();
+
+        // Copy all .wgsl files that start with the exercise name
+        if let Ok(entries) = fs::read_dir(parent_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.extension().and_then(|s| s.to_str()) == Some("wgsl") {
+                    if let Some(name) = path.file_stem().and_then(|s| s.to_str()) {
+                        // Copy if it matches exactly or starts with exercise name + underscore
+                        if name == file_stem || name.starts_with(&format!("{}_", file_stem)) {
+                            let wgsl_name = path.file_name().unwrap();
+                            fs::copy(&path, src_dir.join(wgsl_name)).map_err(|e| e.to_string())?;
+                        }
+                    }
+                }
+            }
         }
 
         // Create a minimal Cargo.toml

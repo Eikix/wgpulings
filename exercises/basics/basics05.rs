@@ -57,19 +57,19 @@ async fn run() {
     // Shader 1: Square each value
     let shader1 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Square"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("basics05.wgsl").into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("basics05_square.wgsl").into()),
     });
 
     // Shader 2: Add 10
     let shader2 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Add 10"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("basics05.wgsl").into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("basics05_add.wgsl").into()),
     });
 
     // TODO: Create shader 3 that multiplies by 2
     let shader3 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Multiply by 2"),
-        source: wgpu::ShaderSource::Wgsl(include_str!("basics05.wgsl").into()),
+        source: wgpu::ShaderSource::Wgsl(include_str!("basics05_multiply.wgsl").into()),
     });
 
     let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
