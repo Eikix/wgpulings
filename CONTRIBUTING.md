@@ -15,6 +15,7 @@ Thank you for your interest in contributing to wgpulings! This document will hel
 ### Exercise File Structure
 
 Each exercise should:
+
 1. Have clear learning objectives
 2. Include explanatory comments
 3. Contain `I AM NOT DONE` marker
@@ -95,6 +96,7 @@ Include:
 ### Hint Writing Guidelines
 
 Good hints should:
+
 - Explain the concept, not give the answer
 - Point to common mistakes
 - Provide encouragement
@@ -102,6 +104,7 @@ Good hints should:
 - Include code examples if helpful
 
 Example:
+
 ```
 Good: "Uniforms are declared with @group(N) @binding(M). The numbers must match your Rust code."
 Bad: "Put @group(0) @binding(0) on line 5"
@@ -119,12 +122,14 @@ Bad: "Put @group(0) @binding(0) on line 5"
 ## Code Style
 
 ### Rust Code
+
 - Follow standard Rust formatting (`cargo fmt`)
 - Use descriptive variable names
 - Comment complex sections
 - Keep examples simple and focused
 
 ### WGSL Code
+
 - Use consistent indentation (4 spaces)
 - Comment shader stages clearly
 - Explain non-obvious vector math
@@ -133,18 +138,21 @@ Bad: "Put @group(0) @binding(0) on line 5"
 ## Exercise Difficulty
 
 ### Beginner
+
 - One concept at a time
 - Lots of comments
 - Small, focused tasks
 - Immediate feedback
 
 ### Intermediate
+
 - Combine 2-3 concepts
 - Less hand-holding
 - Slightly larger tasks
 - Encourage experimentation
 
 ### Advanced
+
 - Multiple concepts
 - Minimal hints
 - Open-ended problems
@@ -153,6 +161,7 @@ Bad: "Put @group(0) @binding(0) on line 5"
 ## Topics We Need
 
 Current gaps (feel free to fill these!):
+
 - More texture exercises (mipmaps, texture arrays)
 - Animation and time-based effects
 - More compute shader examples
@@ -182,6 +191,7 @@ Current gaps (feel free to fill these!):
 ## Questions?
 
 Feel free to:
+
 - Open an issue for discussion
 - Ask in your PR
 - Reach out to maintainers

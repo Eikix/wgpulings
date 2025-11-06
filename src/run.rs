@@ -41,7 +41,11 @@ pub fn run(exercise: &Exercise) {
             println!("{}", "✗".red().bold());
             println!("\n{} Compilation failed:", "✗".red().bold());
             println!("{}", e);
-            println!("\n{} Need help? Try: wgpulings hint {}", "💡".yellow(), exercise.name);
+            println!(
+                "\n{} Need help? Try: wgpulings hint {}",
+                "💡".yellow(),
+                exercise.name
+            );
         }
     }
 }

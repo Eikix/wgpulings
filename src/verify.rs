@@ -20,7 +20,10 @@ pub fn verify(exercises: &[Exercise]) {
         progress.set_message(format!("Checking {}", exercise.name));
 
         if !exercise.is_done() {
-            failed.push((exercise, "Not completed (contains 'I AM NOT DONE')".to_string()));
+            failed.push((
+                exercise,
+                "Not completed (contains 'I AM NOT DONE')".to_string(),
+            ));
             progress.inc(1);
             continue;
         }

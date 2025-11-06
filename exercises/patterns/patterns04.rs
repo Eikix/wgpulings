@@ -28,8 +28,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let input = vec![1u32, 2, 3, 4, 5, 6, 7, 8];
     let size = input.len();

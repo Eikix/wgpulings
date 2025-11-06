@@ -26,8 +26,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let input: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0];
     let size = input.len();
@@ -130,12 +136,12 @@ async fn run() {
         pass.dispatch_workgroups(1, 1, 1);
 
         // TODO: Pass 2: Add 10
-        pass.set_pipeline(&____);  // FIX ME!
+        pass.set_pipeline(&____); // FIX ME!
         pass.set_bind_group(0, &bind_group, &[]);
         pass.dispatch_workgroups(1, 1, 1);
 
         // TODO: Pass 3: Multiply by 2
-        pass.set_pipeline(&____);  // FIX ME!
+        pass.set_pipeline(&____); // FIX ME!
         pass.set_bind_group(0, &bind_group, &[]);
         pass.dispatch_workgroups(1, 1, 1);
     }
@@ -155,7 +161,10 @@ async fn run() {
     println!("  (1²+10)*2=22, (2²+10)*2=28, (3²+10)*2=38, etc.");
 
     let expected = vec![22.0, 28.0, 38.0, 52.0, 70.0];
-    let correct = result.iter().zip(&expected).all(|(a, b)| (a - b).abs() < 0.01);
+    let correct = result
+        .iter()
+        .zip(&expected)
+        .all(|(a, b)| (a - b).abs() < 0.01);
 
     if correct {
         println!("\n✓ All passes executed correctly!");

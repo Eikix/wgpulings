@@ -12,8 +12,8 @@
 
 // I AM NOT DONE
 
-use wgpu::util::DeviceExt;
 use std::time::Instant;
+use wgpu::util::DeviceExt;
 
 fn main() {
     pollster::block_on(run());
@@ -21,8 +21,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let size = 10_000_000usize;
     let data: Vec<f32> = vec![1.0; size];
@@ -75,7 +81,7 @@ async fn run() {
     });
 
     // TODO: Benchmark multiple runs
-    let num_runs = ____;  // FIX ME! Try 10 runs
+    let num_runs = ____; // FIX ME! Try 10 runs
     let mut times = Vec::new();
 
     for _ in 0..num_runs {

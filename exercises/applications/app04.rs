@@ -19,12 +19,24 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let particles = vec![
-        Particle { pos: [0.0, 0.0], vel: [1.0, 1.0] },
-        Particle { pos: [0.5, 0.0], vel: [-1.0, 1.0] },
+        Particle {
+            pos: [0.0, 0.0],
+            vel: [1.0, 1.0],
+        },
+        Particle {
+            pos: [0.5, 0.0],
+            vel: [-1.0, 1.0],
+        },
     ];
 
     let buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {

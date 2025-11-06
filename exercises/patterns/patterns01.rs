@@ -30,8 +30,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     // Temperatures in Celsius
     let celsius: Vec<f32> = vec![0.0, 10.0, 20.0, 30.0, 37.0, 100.0];
@@ -146,7 +152,9 @@ async fn run() {
     println!("\nExpected: [32.0, 50.0, 68.0, 86.0, 98.6, 212.0]");
 
     let expected = vec![32.0, 50.0, 68.0, 86.0, 98.6, 212.0];
-    let correct = fahrenheit_result.iter().zip(&expected)
+    let correct = fahrenheit_result
+        .iter()
+        .zip(&expected)
         .all(|(a, b)| (a - b).abs() < 0.1);
 
     if correct {

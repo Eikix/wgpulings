@@ -22,14 +22,17 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     // Generate random-ish values 0-9
-    let values: Vec<u32> = vec![
-        1, 5, 3, 7, 2, 8, 1, 4, 5, 9,
-        2, 6, 3, 7, 1, 8, 4, 5, 2, 6,
-    ];
+    let values: Vec<u32> = vec![1, 5, 3, 7, 2, 8, 1, 4, 5, 9, 2, 6, 3, 7, 1, 8, 4, 5, 2, 6];
     let num_bins = 10u32;
 
     println!("Values: {:?}", values);
@@ -125,7 +128,13 @@ async fn run() {
         pass.dispatch_workgroups(1, 1, 1);
     }
 
-    encoder.copy_buffer_to_buffer(&histogram_buffer, 0, &staging_buffer, 0, (num_bins * 4) as u64);
+    encoder.copy_buffer_to_buffer(
+        &histogram_buffer,
+        0,
+        &staging_buffer,
+        0,
+        (num_bins * 4) as u64,
+    );
     queue.submit(Some(encoder.finish()));
 
     let slice = staging_buffer.slice(..);

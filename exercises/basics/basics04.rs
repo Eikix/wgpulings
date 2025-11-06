@@ -24,8 +24,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     // Create some data: squares of 0..9
     let size = 10usize;
@@ -48,7 +54,7 @@ async fn run() {
     let staging_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Staging"),
         size: (size * std::mem::size_of::<u32>()) as u64,
-        usage: wgpu::BufferUsages::____ | wgpu::BufferUsages::____,  // FIX ME!
+        usage: wgpu::BufferUsages::____ | wgpu::BufferUsages::____, // FIX ME!
         mapped_at_creation: false,
     });
 
@@ -126,9 +132,9 @@ async fn run() {
     // TODO: Copy output_buffer to staging_buffer
     // Hint: encoder.copy_buffer_to_buffer(src, src_offset, dst, dst_offset, size)
     encoder.copy_buffer_to_buffer(
-        &____,  // FIX ME! Source buffer
+        &____, // FIX ME! Source buffer
         0,
-        &____,  // FIX ME! Destination buffer
+        &____, // FIX ME! Destination buffer
         0,
         (size * std::mem::size_of::<u32>()) as u64,
     );
@@ -156,7 +162,10 @@ async fn run() {
     println!("Output: {:?}", result);
 
     // Verify
-    let correct = result.iter().enumerate().all(|(i, &val)| val == (i as u32) * (i as u32));
+    let correct = result
+        .iter()
+        .enumerate()
+        .all(|(i, &val)| val == (i as u32) * (i as u32));
     if correct {
         println!("\n✓ All values correct!");
         println!("🎉 Success! You read GPU results back to CPU!");

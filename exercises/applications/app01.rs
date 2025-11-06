@@ -32,8 +32,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let width = 4;
     let height = 4;
@@ -139,7 +145,7 @@ async fn run() {
         pass.set_pipeline(&pipeline);
         pass.set_bind_group(0, &bind_group, &[]);
         // 2D dispatch for image processing
-        pass.dispatch_workgroups(1, 1, 1);  // (width/8, height/8, 1)
+        pass.dispatch_workgroups(1, 1, 1); // (width/8, height/8, 1)
     }
 
     encoder.copy_buffer_to_buffer(&output_buffer, 0, &staging_buffer, 0, (size * 4) as u64);
@@ -153,9 +159,10 @@ async fn run() {
     let result: Vec<Pixel> = bytemuck::cast_slice(&data).to_vec();
 
     println!("\n✓ Conversion complete!");
-    println!("First pixel: RGB({}, {}, {}) → Gray({}, {}, {})",
-             pixels[0].r, pixels[0].g, pixels[0].b,
-             result[0].r, result[0].g, result[0].b);
+    println!(
+        "First pixel: RGB({}, {}, {}) → Gray({}, {}, {})",
+        pixels[0].r, pixels[0].g, pixels[0].b, result[0].r, result[0].g, result[0].b
+    );
 
     println!("\n🎉 Success! You've done GPU image processing!");
 }

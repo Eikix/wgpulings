@@ -22,8 +22,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     // Two input arrays
     let input_a: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0];
@@ -45,7 +51,7 @@ async fn run() {
     let buffer_b = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Input B"),
         contents: bytemuck::cast_slice(&input_b),
-        usage: wgpu::BufferUsages::____,  // FIX ME!
+        usage: wgpu::BufferUsages::____, // FIX ME!
     });
 
     // Create output buffer
@@ -118,11 +124,11 @@ async fn run() {
             },
             wgpu::BindGroupEntry {
                 binding: 1,
-                resource: ____.as_entire_binding(),  // FIX ME!
+                resource: ____.as_entire_binding(), // FIX ME!
             },
             wgpu::BindGroupEntry {
                 binding: 2,
-                resource: ____.as_entire_binding(),  // FIX ME!
+                resource: ____.as_entire_binding(), // FIX ME!
             },
         ],
     });

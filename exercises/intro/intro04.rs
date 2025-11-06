@@ -26,12 +26,18 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     // Let's process a bigger array this time!
     let size = 1000;
-    let workgroup_size = 256;  // Defined in shader
+    let workgroup_size = 256; // Defined in shader
 
     // Create array: [0, 1, 2, ..., 999]
     let numbers: Vec<u32> = (0..size).collect();
@@ -124,7 +130,7 @@ async fn run() {
     //
     // In Rust: (size + workgroup_size - 1) / workgroup_size
 
-    let num_workgroups = (____ + ____ - 1) / ____;  // FIX ME!
+    let num_workgroups = (____ + ____ - 1) / ____; // FIX ME!
 
     println!("Processing {} elements", size);
     println!("Workgroup size: {}", workgroup_size);
@@ -141,7 +147,7 @@ async fn run() {
         pass.set_bind_group(0, &bind_group, &[]);
 
         // TODO: Dispatch the correct number of workgroups!
-        pass.dispatch_workgroups(____, 1, 1);  // FIX ME!
+        pass.dispatch_workgroups(____, 1, 1); // FIX ME!
     }
 
     encoder.copy_buffer_to_buffer(&output_buffer, 0, &staging_buffer, 0, (size * 4) as u64);
@@ -160,7 +166,10 @@ async fn run() {
     println!("Last few: {:?}", &result[995..1000]);
 
     // Verify correctness
-    let correct = result.iter().enumerate().all(|(i, &val)| val == (i as u32) * (i as u32));
+    let correct = result
+        .iter()
+        .enumerate()
+        .all(|(i, &val)| val == (i as u32) * (i as u32));
     if correct {
         println!("\n🎉 Perfect! All {} elements computed correctly!", size);
         println!("You now understand workgroups and dispatching!");

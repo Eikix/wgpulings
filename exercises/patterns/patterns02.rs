@@ -25,8 +25,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     // Let's sum these numbers: 1+2+3+...+100 = 5050
     let numbers: Vec<u32> = (1..=100).collect();
@@ -127,10 +133,16 @@ async fn run() {
         });
         pass.set_pipeline(&pipeline);
         pass.set_bind_group(0, &bind_group, &[]);
-        pass.dispatch_workgroups(____ as u32, 1, 1);  // FIX ME! How many workgroups?
+        pass.dispatch_workgroups(____ as u32, 1, 1); // FIX ME! How many workgroups?
     }
 
-    encoder.copy_buffer_to_buffer(&partial_sums_buffer, 0, &staging_buffer, 0, (num_workgroups * 4) as u64);
+    encoder.copy_buffer_to_buffer(
+        &partial_sums_buffer,
+        0,
+        &staging_buffer,
+        0,
+        (num_workgroups * 4) as u64,
+    );
     queue.submit(Some(encoder.finish()));
 
     let slice = staging_buffer.slice(..);

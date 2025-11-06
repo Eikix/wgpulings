@@ -14,14 +14,22 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
-    let n = 4u32;  // 4x4 matrices
+    let n = 4u32; // 4x4 matrices
 
     // A = identity, B = [[2, 2, 2, 2], ...]
-    let a: Vec<f32> = (0..n*n).map(|i| if i % (n+1) == 0 { 1.0 } else { 0.0 }).collect();
-    let b: Vec<f32> = vec![2.0; (n*n) as usize];
+    let a: Vec<f32> = (0..n * n)
+        .map(|i| if i % (n + 1) == 0 { 1.0 } else { 0.0 })
+        .collect();
+    let b: Vec<f32> = vec![2.0; (n * n) as usize];
 
     println!("Multiplying {}x{} matrices", n, n);
 
@@ -38,7 +46,7 @@ async fn run() {
     });
 
     let c_buf = device.create_buffer(&wgpu::BufferDescriptor {
-        size: (n*n * 4) as u64,
+        size: (n * n * 4) as u64,
         usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
         label: None,
@@ -88,9 +96,18 @@ async fn run() {
     let bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
         layout: &bgl,
         entries: &[
-            wgpu::BindGroupEntry { binding: 0, resource: a_buf.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 1, resource: b_buf.as_entire_binding() },
-            wgpu::BindGroupEntry { binding: 2, resource: c_buf.as_entire_binding() },
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: a_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: b_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: c_buf.as_entire_binding(),
+            },
         ],
         label: None,
     });

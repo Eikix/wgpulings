@@ -25,8 +25,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     println!("Occupancy demonstration\n");
 
@@ -42,7 +48,10 @@ async fn run() {
         source: wgpu::ShaderSource::Wgsl(include_str!("perf05.wgsl").into()),
     });
 
-    for (name, shader) in &[("Low Occupancy", &shader_low_occ), ("High Occupancy", &shader_high_occ)] {
+    for (name, shader) in &[
+        ("Low Occupancy", &shader_low_occ),
+        ("High Occupancy", &shader_high_occ),
+    ] {
         let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some(name),
             layout: None,

@@ -21,8 +21,8 @@
 
 // I AM NOT DONE
 
-use wgpu::util::DeviceExt;
 use std::time::Instant;
+use wgpu::util::DeviceExt;
 
 fn main() {
     pollster::block_on(run());
@@ -30,8 +30,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let size = 1_000_000;
     let data: Vec<f32> = (0..size).map(|i| i as f32).collect();
@@ -45,10 +51,11 @@ async fn run() {
     println!("Testing workgroup sizes with {} elements\n", size);
 
     // TODO: Test different workgroup sizes
-    let workgroup_sizes = vec![____, ____, ____, ____];  // FIX ME! Try: 32, 64, 128, 256
+    let workgroup_sizes = vec![____, ____, ____, ____]; // FIX ME! Try: 32, 64, 128, 256
 
     for &wg_size in &workgroup_sizes {
-        let shader_source = format!(r#"
+        let shader_source = format!(
+            r#"
             @group(0) @binding(0) var<storage, read_write> data: array<f32>;
 
             @compute @workgroup_size({})
@@ -59,7 +66,9 @@ async fn run() {
                     data[i] = sqrt(data[i]) * 2.0 + 1.0;
                 }}
             }}
-        "#, wg_size);
+        "#,
+            wg_size
+        );
 
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Test"),
@@ -121,8 +130,10 @@ async fn run() {
 
         let elapsed = start.elapsed();
 
-        println!("Workgroup size {:3}: {:?} ({} workgroups)",
-                 wg_size, elapsed, num_workgroups);
+        println!(
+            "Workgroup size {:3}: {:?} ({} workgroups)",
+            wg_size, elapsed, num_workgroups
+        );
     }
 
     println!("\n🎉 Experiment complete!");

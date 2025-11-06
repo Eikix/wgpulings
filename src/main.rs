@@ -108,13 +108,15 @@ fn list_exercises(exercises: &[Exercise], unsolved_only: bool) {
             println!("\n{}", section.to_uppercase().cyan().bold());
         }
 
-        let status = if is_done {
-            "✓".green()
-        } else {
-            "○".red()
-        };
+        let status = if is_done { "✓".green() } else { "○".red() };
 
-        println!("  {} {:<3} {:<15} {}", status, i + 1, exercise.name, exercise.path);
+        println!(
+            "  {} {:<3} {:<15} {}",
+            status,
+            i + 1,
+            exercise.name,
+            exercise.path
+        );
     }
 
     let total = exercises.len();
@@ -124,6 +126,11 @@ fn list_exercises(exercises: &[Exercise], unsolved_only: bool) {
     println!("  {}/{} exercises completed", completed, total);
 
     if completed == total {
-        println!("\n{}", "🎉 Congratulations! You've completed all exercises!".green().bold());
+        println!(
+            "\n{}",
+            "🎉 Congratulations! You've completed all exercises!"
+                .green()
+                .bold()
+        );
     }
 }

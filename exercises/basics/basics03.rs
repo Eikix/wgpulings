@@ -22,7 +22,7 @@ use wgpu::util::DeviceExt;
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 struct Params {
     scale: f32,
-    _padding: [f32; 3],  // Uniforms need 16-byte alignment
+    _padding: [f32; 3], // Uniforms need 16-byte alignment
 }
 
 fn main() {
@@ -31,8 +31,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let input: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0];
     let size = input.len();
@@ -64,7 +70,7 @@ async fn run() {
     let uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Uniform Buffer"),
         contents: bytemuck::cast_slice(&[params]),
-        usage: wgpu::BufferUsages::____,  // FIX ME! Hint: UNIFORM
+        usage: wgpu::BufferUsages::____, // FIX ME! Hint: UNIFORM
     });
 
     // Staging buffer

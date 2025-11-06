@@ -30,7 +30,11 @@ pub fn watch(exercises: &[Exercise]) {
     let mut current_exercise = exercises.iter().find(|e| !e.is_done());
 
     if let Some(exercise) = current_exercise {
-        println!("{} Current exercise: {}\n", "→".cyan().bold(), exercise.name);
+        println!(
+            "{} Current exercise: {}\n",
+            "→".cyan().bold(),
+            exercise.name
+        );
         check_exercise(exercise);
     } else {
         println!("{} All exercises completed!", "✓".green().bold());
@@ -54,11 +58,20 @@ pub fn watch(exercises: &[Exercise]) {
                     // If completed, move to next
                     if exercise.is_done() {
                         if let Ok(()) = exercise.compile() {
-                            println!("\n{} Exercise completed! Moving to next...\n", "✓".green().bold());
+                            println!(
+                                "\n{} Exercise completed! Moving to next...\n",
+                                "✓".green().bold()
+                            );
 
                             // Find next incomplete exercise
-                            let current_idx = exercises.iter().position(|e| e.name == exercise.name).unwrap();
-                            current_exercise = exercises.iter().skip(current_idx + 1).find(|e| !e.is_done());
+                            let current_idx = exercises
+                                .iter()
+                                .position(|e| e.name == exercise.name)
+                                .unwrap();
+                            current_exercise = exercises
+                                .iter()
+                                .skip(current_idx + 1)
+                                .find(|e| !e.is_done());
 
                             if let Some(next) = current_exercise {
                                 println!("{} Next exercise: {}\n", "→".cyan().bold(), next.name);
@@ -84,7 +97,10 @@ fn check_exercise(exercise: &Exercise) {
     println!("{}", "=".repeat(50));
 
     if !exercise.is_done() {
-        println!("\n{} Exercise contains \"I AM NOT DONE\"", "⚠".yellow().bold());
+        println!(
+            "\n{} Exercise contains \"I AM NOT DONE\"",
+            "⚠".yellow().bold()
+        );
         println!("Remove this marker when you're ready to check your solution.");
         println!("\n{} Hint: wgpulings hint {}", "💡".yellow(), exercise.name);
         return;

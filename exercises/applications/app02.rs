@@ -22,8 +22,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let width = 8u32;
     let height = 8u32;
@@ -31,7 +37,7 @@ async fn run() {
 
     // Create test image
     let mut image: Vec<f32> = vec![0.0; size];
-    image[width as usize * 4 + 4] = 1.0;  // Bright center pixel
+    image[width as usize * 4 + 4] = 1.0; // Bright center pixel
 
     println!("Applying 3x3 box blur to {}x{} image", width, height);
 

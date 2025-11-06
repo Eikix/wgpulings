@@ -23,8 +23,14 @@ fn main() {
 
 async fn run() {
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor::default());
-    let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+    let (device, queue) = adapter
+        .request_device(&wgpu::DeviceDescriptor::default(), None)
+        .await
+        .unwrap();
 
     let size = 1_000_000usize;
     let data: Vec<f32> = vec![1.0; size];
@@ -99,7 +105,10 @@ async fn run() {
         label: None,
     });
 
-    for (name, shader) in &[("Coalesced", &shader_coalesced), ("Uncoalesced", &shader_uncoalesced)] {
+    for (name, shader) in &[
+        ("Coalesced", &shader_coalesced),
+        ("Uncoalesced", &shader_uncoalesced),
+    ] {
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             bind_group_layouts: &[&bind_group_layout],
             push_constant_ranges: &[],

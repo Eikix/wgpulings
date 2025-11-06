@@ -12,6 +12,7 @@ Inspired by [rustlings](https://github.com/rust-lang/rustlings), wgpulings teach
 wgpulings is an interactive, **compute-first** tutorial for learning GPU programming. We focus on **parallel computing** and **data processing**, NOT graphics rendering.
 
 Perfect for:
+
 - 🚀 **Parallel data processing** (process millions of elements in parallel)
 - 🔬 **Scientific computing** (simulations, numerical methods)
 - 🖼️ **Image/video processing** (filters, transformations)
@@ -24,6 +25,7 @@ Learn to write code that runs **thousands of operations simultaneously** on the 
 ## Why GPU Compute?
 
 Modern GPUs have **thousands of cores**. A single GPU can execute:
+
 - **10,000+ threads in parallel**
 - **Teraflops of computation**
 - **Hundreds of GB/s memory bandwidth**
@@ -80,6 +82,7 @@ cargo run --release -- watch
 ```
 
 This is the **best way to learn**! Watch mode:
+
 - ⚡ Automatically checks your solution when you save
 - 🔍 Shows compilation errors immediately
 - ➡️ Moves to the next exercise when you complete one
@@ -104,14 +107,18 @@ cargo run --release -- verify
 ## Learning Path
 
 ### 🎓 INTRO (4 exercises)
+
 Learn GPU compute fundamentals:
+
 - Setting up wgpu for compute (no windows!)
 - Your first compute shader
 - Buffers and data transfer (CPU ↔ GPU)
 - Workgroups and parallel dispatch
 
 ### ⚙️ COMPUTE BASICS (5 exercises)
+
 Master core parallel programming:
+
 - WGSL compute shader syntax
 - Storage buffers (read/write data)
 - Uniform buffers (parameters)
@@ -119,7 +126,9 @@ Master core parallel programming:
 - Multiple compute passes
 
 ### 🔄 PARALLEL PATTERNS (6 exercises)
+
 Learn common parallel algorithms:
+
 - **Map**: Apply function to every element
 - **Reduce**: Combine many values to one (sum, max, min)
 - **Scan**: Prefix sum (cumulative operations)
@@ -128,7 +137,9 @@ Learn common parallel algorithms:
 - **Shared memory**: Fast workgroup-local memory
 
 ### ⚡ PERFORMANCE (5 exercises)
+
 Optimize your GPU code:
+
 - Workgroup sizing strategies
 - Memory coalescing patterns
 - Bank conflict avoidance
@@ -136,7 +147,9 @@ Optimize your GPU code:
 - Occupancy optimization
 
 ### 🚀 APPLICATIONS (6 exercises)
+
 Build real-world programs:
+
 - Image processing (grayscale, blur, filters)
 - Matrix multiplication (tiled algorithm)
 - Particle simulations
@@ -145,7 +158,9 @@ Build real-world programs:
 - Custom compute pipelines
 
 ### 🎨 GRAPHICS (3 exercises - OPTIONAL)
+
 If you want to visualize results:
+
 - Basic rendering pipeline
 - Visualizing compute results
 - Mixing compute + graphics
@@ -153,6 +168,7 @@ If you want to visualize results:
 ## Exercise Structure
 
 Each exercise:
+
 1. Has the marker `I AM NOT DONE` (remove when solved)
 2. Contains `____` markers showing what to fix
 3. Includes extensive comments explaining concepts
@@ -286,16 +302,19 @@ fn reduce(@builtin(global_invocation_id) gid: vec3<u32>,
 ## Troubleshooting
 
 ### "Failed to find adapter"
+
 - Update graphics drivers
 - Try software fallback
 - Check GPU compatibility
 
 ### "Shader compilation failed"
+
 - Read the error message carefully
 - Check WGSL syntax
 - Verify @group/@binding numbers match
 
 ### "Results are wrong"
+
 - Check workgroup dispatch calculation
 - Verify array bounds checks
 - Print intermediate values (use storage buffer)
@@ -304,16 +323,19 @@ fn reduce(@builtin(global_invocation_id) gid: vec3<u32>,
 ## Resources
 
 ### WebGPU & WGSL
+
 - [WebGPU Spec](https://www.w3.org/TR/webgpu/)
 - [WGSL Spec](https://www.w3.org/TR/WGSL/)
 - [wgpu Docs](https://docs.rs/wgpu/)
 
 ### GPU Computing
+
 - [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/) (concepts transfer!)
 - [GPU Gems](https://developer.nvidia.com/gpugems/gpugems3/contributors) (algorithms)
 - [Parallel Algorithms](https://en.wikipedia.org/wiki/Parallel_algorithm) (theory)
 
 ### Community
+
 - [Graphics Programming Discord](https://discord.gg/graphicsprogramming)
 - [wgpu Matrix Chat](https://matrix.to/#/#wgpu:matrix.org)
 - [Rust GPU](https://github.com/EmbarkStudios/rust-gpu)
