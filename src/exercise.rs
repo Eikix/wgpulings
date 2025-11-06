@@ -61,6 +61,13 @@ impl Exercise {
         fs::create_dir_all(&src_dir).map_err(|e| e.to_string())?;
         fs::copy(&self.path, src_dir.join("main.rs")).map_err(|e| e.to_string())?;
 
+        // Copy any associated .wgsl file (same name, different extension)
+        let wgsl_path = PathBuf::from(&self.path).with_extension("wgsl");
+        if wgsl_path.exists() {
+            let wgsl_name = wgsl_path.file_name().unwrap();
+            fs::copy(&wgsl_path, src_dir.join(wgsl_name)).map_err(|e| e.to_string())?;
+        }
+
         // Create a minimal Cargo.toml
         let cargo_toml = format!(
             r#"[package]
@@ -122,6 +129,13 @@ cgmath = "0.18"
         let src_dir = temp_dir.join("src");
         fs::create_dir_all(&src_dir).map_err(|e| e.to_string())?;
         fs::copy(&self.path, src_dir.join("main.rs")).map_err(|e| e.to_string())?;
+
+        // Copy any associated .wgsl file (same name, different extension)
+        let wgsl_path = PathBuf::from(&self.path).with_extension("wgsl");
+        if wgsl_path.exists() {
+            let wgsl_name = wgsl_path.file_name().unwrap();
+            fs::copy(&wgsl_path, src_dir.join(wgsl_name)).map_err(|e| e.to_string())?;
+        }
 
         // Create a minimal Cargo.toml
         let cargo_toml = format!(
